@@ -85,3 +85,28 @@ class TestVies(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"message": "Hello World!"})
+
+        endpoint = reverse("api-1.0.0:protected")
+        response = self.client.get(
+            endpoint,
+            **{
+                "HTTP_AUTHORIZATION": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk1MjgzODAwLCJpYXQiOjE2OTUyODM1MDAsImp0aSI6IjAwNjQ3N2U5MWVjMjQwNWJhMGE5ZWFjNWJiYWE1OTViIiwidXNlcl9pZCI6MX0.254i8AE8NAWU9MeXPapbbdHDaUF_lxwfX4VBlanUnuI"
+            },
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(
+            response_data,
+            {
+                "detail": "Given token not valid for any token type",
+                "code": "token_not_valid",
+                "messages": [
+                    {
+                        "token_class": "AccessToken",
+                        "token_type": "access",
+                        "message": "Token is invalid or expired",
+                    }
+                ],
+            },
+        )
